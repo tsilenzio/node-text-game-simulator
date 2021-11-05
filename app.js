@@ -1,3 +1,4 @@
+const chalk = require("chalk");
 const Player = require('./Entities/Player').Player;
 const Enemy = require('./Entities/Enemy/Enemy').Enemy;
 const Grunt = require('./Entities/Enemy/Grunt').Grunt;
@@ -108,9 +109,9 @@ while (true) {
 
     if (onlyPlayersLeft() || onlyEnemiesLeft()) {
         if (onlyPlayersLeft()) {
-            console.log('Players have won!');
+            console.log(chalk.green('Players have won!'));
         } else if (onlyEnemiesLeft()) {
-            console.log('Players have lost!');
+            console.log(chalk.red('Enemies have won!'));
         }
 
         process.exit();

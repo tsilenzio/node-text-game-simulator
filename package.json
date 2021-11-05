@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/tsilenzio/node-text-game-simulator/issues"
   },
-  "homepage": "https://github.com/tsilenzio/node-text-game-simulator#readme"
+  "homepage": "https://github.com/tsilenzio/node-text-game-simulator#readme",
+  "dependencies": {
+    "chalk": "^4.1.2"
+  }
 }

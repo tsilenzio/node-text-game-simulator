@@ -1,3 +1,5 @@
+const chalk = require("chalk");
+
 class Person {
     constructor(name, health = 100, damage, entityType) {
         this.name = name;
@@ -18,19 +20,41 @@ class Person {
 
         person.hit(damage);
 
-        console.log(`${this.toString()} ${this.name} shoots ${preHitPerson} for ${damage} damage, remaining health ${person.health}`);
+        console.log(`${this.toString()} ${this.name} shoots ${preHitPerson} for ${damage} damage, remaining health ${person.displayHealth()}`);
 
         if (person.health === 0) {
             person.died();
         }
     }
 
-    died() {
-        console.log(`${this.toString()} died`);
+    // Displays the health with colors
+    displayHealth() {
+        // Display as blue if undamaged
+        if (this.health === this.startingHealth) {
+            return chalk.blue(`${this.health}hp`);
+        }
+
+        // Display as red if less than 1/3 of life remaining
+        if (this.health < this.startingHealth / 3) {
+            return chalk.red(`${this.health}hp`);
+        }
+
+        // Display as orange if less than of life is remaining
+        if (this.health < this.startingHealth / 2) {
+            return chalk.yellow(`${this.health}hp`);
+        }
+
+        // Display as green if they have most of their life left
+        return chalk.green(`${this.health}hp`);
     }
 
-    toString() {
-        return `[${this.entityType}] [${this.name}, ${this.health}]`;
+    spawn() {
+        this.startingHealth = this.health;
+        console.log(`${this.toString()} spawned`);
+    }
+
+    died() {
+        console.log(chalk.strikethrough(`${this.toString()} died`));
     }
 }
 

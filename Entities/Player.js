@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const Person = require('./Person').Person;
 
 class Player extends Person {
@@ -6,8 +7,8 @@ class Player extends Person {
         this.spawn();
     }
 
-    spawn() {
-        console.log(`${this.toString()} spawned`);
+    toString() {
+        return `${chalk.cyan(`[${this.entityType}]`)} [${this.name} ${this.displayHealth()}]`;
     }
 }
 

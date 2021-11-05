@@ -5,10 +5,6 @@ class Grunt extends Enemy {
         super(name, health, damage, 'Grunt');
         this.spawn();
     }
-
-    spawn() {
-        console.log(`${this.toString()} spawned`);
-    }
 }
 
 module.exports = { Grunt };

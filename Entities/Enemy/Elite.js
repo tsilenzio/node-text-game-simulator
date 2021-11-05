@@ -5,10 +5,6 @@ class Elite extends Enemy {
         super(name, health, damage, 'Elite');
         this.spawn();
     }
-
-    spawn() {
-        console.log(`${this.toString()} spawned`);
-    }
 }
 
 module.exports = { Elite };
