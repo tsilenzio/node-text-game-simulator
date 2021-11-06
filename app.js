@@ -1,60 +1,52 @@
 const chalk = require("chalk");
-const Player = require('./Entities/Player').Player;
-const Enemy = require('./Entities/Enemy/Enemy').Enemy;
-const Grunt = require('./Entities/Enemy/Grunt').Grunt;
-const Elite = require('./Entities/Enemy/Elite').Elite;
-const Hunter = require('./Entities/Enemy/Hunter').Hunter;
+const Entity = require('./Entities/Entity');
+const Human = require('./Entities/Human/Human');
+const Soilder = require('./Entities/Human/Soldier');
+const Spartian = require('./Entities/Human/Spartian');
+const Covenant = require('./Entities/Covenant/Covenant');
+const Grunt = require('./Entities/Covenant/Grunt');
+const Elite = require('./Entities/Covenant/Elite');
+const Hunter = require('./Entities/Covenant/Hunter');
 
 const entities = [
-    new Player('Masterchief', 50, [250, 250]),
-    new Player('Locke'),
-    new Player('Miller'),
-    new Grunt('Kal-el'),
-    new Grunt('Zor-el'),
-    new Grunt('Zod'),
-    new Elite('Butters'),
-    new Elite('Cartman'),
-    new Hunter('Juggernaut', 1000),
+    new Spartian('Masterchief', 50, [250, 250]),
+    new Spartian('Locke'),
+    new Soilder('Private Ryan'),
+    new Soilder('Private Miller'),
+    new Grunt("V'alvak"),
+    new Grunt("Ka'jis"),
+    new Grunt("B'zuc"),
+    new Grunt("Ka'jud"),
+    new Grunt("Ka'zar"),
+    new Elite('Cacjuc'),
+    new Elite('Kaygongon'),
+    new Elite('Mazell'),
+    new Hunter('Dopzoik', 1000, undefined, 'Banished'),
 ];
-
-
-// Person
-//   ->
-//      Enemty
-//        ->
-//            Grunt
-//            Elite
-//            Hunter
-
-// const entity = getEntity();
-
-// entity instanceof Grunt || entity instanceof Elite || entity instanceof Hunter
-// -- Same as --
-// entity instanceof Enemy
 
 
 function getEntity() {
     return entities[Math.floor(Math.random() * entities.length)];
 }
 
-function getPlayer() {
-    let player = getEntity();
+function getFactionEntity(faction) {
+    let entity = getEntity();
 
-    while (player instanceof Enemy) {
-        player = getEntity();
+    while (entity.faction !== faction) {
+        entity = getEntity();
     }
 
-    return player;
+    return entity;
 }
 
-function getEnemy() {
-    let enemy = getEntity();
+function getOtherFactionEntity(faction) {
+    let entity = getEntity();
 
-    while (enemy instanceof Player) {
-        enemy = getEntity();
+    while (entity.faction === faction) {
+        entity = getEntity();
     }
 
-    return enemy;
+    return entity;
 }
 
 function removeEntity(entity) {
@@ -65,55 +57,56 @@ function removeEntity(entity) {
     }
 }
 
-function onlyPlayersLeft() {
+function getFactions() {
+    let factions = [];
+
     for (let entity of entities) {
-        if (entity instanceof Enemy) return false;
+        if (!factions.includes(entity.faction)) {
+            factions.push(entity.faction);
+        }
     }
 
-    return true;
+    return factions;
 }
 
-function onlyEnemiesLeft() {
-    for (let entity of entities) {
-        if (entity instanceof Player) return false;
-    }
-
-    return true;
-}
+let factions = getFactions();
 
 // Run the game
 while (true) {
     // Get random enity from entities array
-    const entity = getEntity();
+    const entity1 = getEntity();
+    const entity2 = getOtherFactionEntity(entity1.faction);
+    entity1.shoot(entity2);
 
-    // If entity is player, shoot an enemy
-    if (entity instanceof Player) {
-        // Attempt to get an enemy from entities array
-        const enemy = getEnemy();
-
-        entity.shoot(enemy);
-
-        // Remove enemy from game if they died
-        if (enemy.health === 0) {
-            removeEntity(enemy);
-        }
-    } else {
-        const player = getPlayer();
-        entity.shoot(player);
-
-        // Remove player from game if they died
-        if (player.health === 0) {
-            removeEntity(player);
-        }
+    if (entity2.health === 0) {
+        removeEntity(entity2);
     }
 
-    if (onlyPlayersLeft() || onlyEnemiesLeft()) {
-        if (onlyPlayersLeft()) {
-            console.log(chalk.green('Players have won!'));
-        } else if (onlyEnemiesLeft()) {
-            console.log(chalk.red('Enemies have won!'));
-        }
+    const currentFactions = getFactions();
 
+    if (currentFactions.length < factions.length) {
+        // Find the faction that just got wiped out
+        let deadFaction = factions.filter(x => !currentFactions.includes(x));
+        // deadFaction is always an array with a single element, get the only element value
+        deadFaction = deadFaction[0];
+        // Get dying faction color
+        const color = Entity.prototype.getColor(deadFaction);
+        
+        // Log the dead faction & use their color scheme
+        console.log(chalk.hex(color)(`All ${deadFaction} entities have been killed off!`));
+
+        // Update factions to reamining amount
+        factions = currentFactions;
+    }
+
+    // End the game when only one faction is left
+    if (factions.length === 1) {
+        const winningFaction = factions[0];
+        const color = Entity.prototype.getColor(winningFaction);
+
+        console.log(chalk.hex(color)(`${winningFaction} faction has won!`));
+
+        // Exit the game
         process.exit();
     }
 }

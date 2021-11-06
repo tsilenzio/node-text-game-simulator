@@ -1,11 +1,11 @@
 const chalk = require("chalk");
 
-class Person {
-    constructor(name, health = 100, damage, entityType) {
+class Entity {
+    constructor(name, health = 100, damage, faction) {
         this.name = name;
         this.health = health;
         this.damage = damage;
-        this.entityType = entityType
+        this.faction = faction
     }
 
     hit(damageTaken) {
@@ -14,16 +14,16 @@ class Person {
         if (this.health < 0) this.health = 0;
     }
 
-    shoot(person) {
+    shoot(entity) {
         const damage = Math.floor(Math.random() * (this.damage[1] - this.damage[0] + 1) + this.damage[0]);
-        const preHitPerson = person.toString();
+        const entityInfoPreHit = entity.toString();
 
-        person.hit(damage);
+        entity.hit(damage);
 
-        console.log(`${this.toString()} ${this.name} shoots ${preHitPerson} for ${damage} damage, remaining health ${person.displayHealth()}`);
+        console.log(`${this.toString()} ${this.name} shoots ${entityInfoPreHit} for ${damage} damage, remaining health ${entity.displayHealth()}`);
 
-        if (person.health === 0) {
-            person.died();
+        if (entity.health === 0) {
+            entity.died();
         }
     }
 
@@ -56,6 +56,32 @@ class Person {
     died() {
         console.log(chalk.strikethrough(`${this.toString()} died`));
     }
+
+    // Generate random hex color (#rrggbb) so it's random but consistent for repeated strings
+    getColor(string) {
+        // Convert string from English to hexadecimal
+        const hex = Buffer
+            .from(string)
+            .toString('hex')
+            // Reverse the order of the hex string
+            .split('')
+            .reverse()
+            .join('');
+
+        // Generate colors from hex
+        const red = hex.substring(0, 2);
+        const green = hex.substring(2, 4);
+        const blue = hex.substring(4, 6);
+
+        return `#${red}${green}${blue}`;
+    }
+
+    // Print entity faction, name, type & hp
+    toString() {
+        const factionColor = this.getColor(this.faction);
+        
+        return `${chalk.hex(factionColor)(`[${this.faction}]`)} [${this.name} ${this.displayHealth()}]`;
+    }
 }
 
-module.exports = { Person };
+module.exports = Entity;
