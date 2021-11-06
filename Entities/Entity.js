@@ -20,7 +20,7 @@ class Entity {
 
         entity.hit(damage);
 
-        console.log(`${this.toString()} ${this.name} shoots ${entityInfoPreHit} for ${damage} damage, remaining health ${entity.displayHealth()}`);
+        console.log(`${this.toString()} shoots ${entityInfoPreHit} for ${damage} damage, ${entity.displayHealth()} left`);
 
         if (entity.health === 0) {
             entity.died();
@@ -50,6 +50,7 @@ class Entity {
 
     spawn() {
         this.startingHealth = this.health;
+        if (this.faction === 'Broly') console.log(chalk.red('A legendary Super Saiyan was born!'));
         console.log(`${this.toString()} spawned`);
     }
 
@@ -79,8 +80,8 @@ class Entity {
     // Print entity faction, name, type & hp
     toString() {
         const factionColor = this.getColor(this.faction);
-        
-        return `${chalk.hex(factionColor)(`[${this.faction}]`)} [${this.name} ${this.displayHealth()}]`;
+
+        return `${chalk.hex(factionColor)(`[${this.faction}]`)} [${this.constructor.name} ${this.name} ${this.displayHealth()}]`;
     }
 }
 
